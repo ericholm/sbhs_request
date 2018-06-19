@@ -8,7 +8,7 @@ requests through the school proxy. Here's a basic usage example:
 ```python
 from NetRequest import *
 
-net = NetRequest()
+net = NetRequest(Proxy("proxyUsername", "proxyPassword")
 response = net.get("https://www.google.com/") //Performs HTTP get on url
 print(response)
 ```
