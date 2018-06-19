@@ -9,6 +9,6 @@ requests through the school proxy. Here's a basic usage example:
 from NetRequest import *
 
 net = NetRequest()
-response = net.get("")
+response = net.get("https://www.google.com/") //Performs HTTP get on url
 print(response)
 ```
