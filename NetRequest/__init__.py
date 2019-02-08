@@ -7,7 +7,7 @@ NetRequests is a HTTP library for students. It routes your http
 requests through the school proxy.
 
 :copyright: Copyright (c) 2017 Dawei Wu and Eric Holmstrom. All Rights Reserved.
-:license: Apache 2.0, see LICENSE for more details.
+:license: MIT, see LICENSE for more details.
 """
 
 import urllib.request
