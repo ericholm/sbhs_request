@@ -3,12 +3,13 @@
 NetRequests Library
 *******************
 
-NetRequests is a HTTP library for students. It auto-magically routes your
-requests through the school proxy. Here's a basic usage example:
+NetRequests is a HTTP library for students. It routes your http
+requests through the school proxy.
 
-:copyright: (c) 2017 by Dawei Wu and Eric Holmstrom.
+:copyright: Copyright (c) 2017 Dawei Wu and Eric Holmstrom. All Rights Reserved.
 :license: Apache 2.0, see LICENSE for more details.
 """
+
 import urllib.request
 
 class Header():
@@ -18,18 +19,37 @@ class Header():
 
 class Proxy():
 	def __init__(self, *args):
-		print(args)
-		if (len(args) == 2):
+        num_args = len(args)
+        
+        if (num_args == 1):
+            with open(args[0],"r") as f:
+				self.username = self.normaliseUsername(f.readline())
+				self.password = f.readline().strip()
+                
+		elif (num_args == 2):
 			self.username = args[0]
 			self.password = args[1]
+            
 		else:
-			with open(args[0],"r") as f:
-				self.username = f.readline().strip()
-				self.password = f.readline().strip()
-		self.__url = "http://" + self.username + ":" + self.password + "@proxy.intranet:8080"
+			raise ValueError("Incorrect arguments supplied to Proxy constructor.")
+            
+        self._proxyUrl = "proxy.intranet:8080"
+		self.setProxyUrl()
+        
+    def normaliseUsername(username):
+        username = username.strip()
+        
+        if username.endswith('@detnsw'):
+            username = username[:-7]
+        
+        
 
-	def setProxy(self, proxyUrl):
-		self.__url = "http://" + self.username + ":" + self.password + "@" + proxyUrl
+    def setProxyUrl(self):
+        self.__url = "http://" + self.username + ":" + self.password + "@" + self._proxyUrl
+        
+	def proxyUrl(self, proxyUrl):
+        self._proxyUrl = proxyUrl
+		self.setProxyUrl()
 
 	def get(self):
 		return {
@@ -39,18 +59,24 @@ class Proxy():
 
 class NetRequest():
 	def __init__(self, proxy = None):
-		self.proxy = proxy
 		if proxy is not None:
-			urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler(proxy.get())))
+            
+            if isinstance(proxy, Proxy) or hasattr(proxy, 'get'):
+                self.proxy = proxy
+                urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler(proxy.get())))
+            else:
+                raise ValueError("Incorrect argument supplied to NetRequest constructor.")
 
 	def get(self, url):
 		return urllib.request.urlopen(url).read()
 
 	def post(self, url, data = None, headers = None):
-		if data != None:
+		if data is not None:
 			data = urllib.parse.urlencode(data).encode()
-		req = urllib.request.Request(url, data=data)
-		if headers != None:
+		
+        req = urllib.request.Request(url, data=data)
+		
+        if headers is not None:
 			for header in headers:
 				req.add_header(header.key, header.value)
 

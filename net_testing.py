@@ -1,5 +1,6 @@
 from NetRequest import *
 
-net = NetRequest()
-response = net.get("")
+net = NetRequest(Proxy("proxyUsername", "proxyPassword"))
+response = net.get("https://httpbin.org/ip")
+
 print(response)
